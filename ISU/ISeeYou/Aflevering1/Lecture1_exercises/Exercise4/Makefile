@@ -1,0 +1,56 @@
+#Name the executeable file the same as the folder:
+BIN_NAME := $(notdir $(shell pwd))
+#Name of output:
+OUTPUT   := build
+#Source files created:
+SOURCES  := $(subst ./,,$(shell find -name '*.c' -o -name '*.cpp'))
+#Object files created:
+OBJECTS  := $(patsubst %.cpp, ${OUTPUT}/%.o, ${SOURCES})
+#Dependencies created:
+DEPS 	 := $(OBJECTS:%.o=%.d)
+
+#Include dependencies
+-include $(DEPS)
+
+#Define what compiler to use:
+ifeq (${ARCH},host)
+CXX=g++
+BUILD_DIR=build/host
+endif
+
+ifeq (${ARCH},target)
+CXX=arm-rpizw-g++
+BUILD_DIR=build/target
+endif
+
+#Common CFLAGS:
+CFLAGS 	 := -c
+CXXFLAGS =-I -lncurses
+#Common LFLAGS:
+LDFLAGS  := -lm
+#Create a folder for the build:
+$(shell mkdir -p -m a=rwx ${OUTPUT})
+
+all: $(BIN_NAME)
+
+${BIN_NAME}:${OBJECTS}
+	@echo "[Linking] "$@
+	@${CXX} ${LDFLAGS} ${OBJECTS} -o ${OUTPUT}/$@ -lncurses
+	@echo "done, executeable is located @ "${OUTPUT}/$@
+
+.PHONY : clean	
+clean:
+	@rm -rf $(OUTPUT)
+	@echo "Done."
+
+${OUTPUT}/%.o : %.cpp
+	@echo "[Compiling] "$@
+	@mkdir -p -m a=rwx ${dir $@}
+	@${CXX} ${CFLAGS} $^ -o $@ 
+
+help:
+	@echo Just write make or clean
+
+ifneq (${MAKECMDGOALS},clean)
+-include ${DEPS}
+endif

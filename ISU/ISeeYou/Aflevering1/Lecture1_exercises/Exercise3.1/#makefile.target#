@@ -1,0 +1,24 @@
+SOURCES=hello.cpp
+
+OBJECTS=${SOURCES:-cpp=.o}
+
+EXECUTABLE=RUN
+
+CXX=g++
+
+all:${EXECUTABLE}
+
+${EXECUTABLE}:${OBJECTS}
+${CXX} -o ${EXECUTABLE} ${OBJECTS}
+
+hello.o:hello.cpp
+	${CXX} -c hello.cpp
+
+clean:
+	rm -rf *.o && rm ${EXECUTABLE}
+
+help:
+	@echo You can make:
+	@echo all
+	@echo clean
+	@echo help

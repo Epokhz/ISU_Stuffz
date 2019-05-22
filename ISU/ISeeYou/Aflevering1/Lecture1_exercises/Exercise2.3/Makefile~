@@ -1,0 +1,35 @@
+
+SOURCES=main.cpp part1.cpp part1.hpp part2.cpp part2.hpp
+
+OBJECTS=${SOURCES:-cpp=.o}
+
+EXECUTABLE=RUN
+
+CXX=g++
+
+all:${EXECUTABLE}
+
+${EXECUTABLE}:${OBJECTS}
+	${CXX} -o ${EXECUTABLE} ${OBJECTS}
+
+#main.o:main.cpp part1.hpp  part1.cpp part2.cpp part2.hpp
+#	${CXX} -c main.cpp
+
+main.o:main.cpp part1.cpp part2.cpp
+	${CXX} -c main.cpp
+
+part1.o:part1.cpp part1.hpp
+	${CXX} -c part1.cpp
+
+part2.o:part2.cpp part2.hpp
+	${CXX} -c part2.cpp
+
+clean:
+	rm -rf *.o && rm ${EXECUTABLE}
+	@echo Done
+
+help :
+	@echo You can make:
+	@echo all
+	@echo clean
+	@echo help
